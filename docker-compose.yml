@@ -1,0 +1,46 @@
+version: '3.2'
+
+services:
+    nginx:
+        build:
+            context: ./docker/nginx
+        container_name: nginx-con
+        volumes:
+            - ./:/var/www/symfony/:cached
+        ports:
+            - 80:80
+        networks:
+            - symfony
+    db: #address
+        image: mariadb:10.11.2
+        container_name: db-con
+        ports:
+            - "3317:3306"
+        environment:
+            - MYSQL_DATABASE=symfony
+            - MYSQL_ROOT_PASSWORD=root
+        volumes:
+            - ./dbdata:/var/lib/mysql
+        networks:
+            - symfony
+    php:
+        build:
+            context: ./docker/php
+        container_name: php-con
+        environment:
+            - DATABASE_URL=mysql://root:root@db/symfony
+        volumes:
+            - ./:/var/www/symfony/:cached
+        networks:
+            - symfony
+    node:
+        image: node:19-bullseye-slim
+        container_name: node-con
+        working_dir: /var/www/symfony/
+        volumes:
+            - ./:/var/www/symfony/:cached
+        tty: true
+        networks:
+            - symfony
+networks:
+    symfony:
