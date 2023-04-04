@@ -19,3 +19,5 @@ Docker
   ```sh
   make fruits-fetch
   ```
+
+* Go to http://localhost
